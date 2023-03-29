@@ -1,0 +1,25 @@
+{
+  "dependencies": {
+    "fs": "^0.0.1-security",
+    "natural": "^6.2.0",
+    "path": "^0.12.7"
+  },
+  "name": "glang_extractor",
+  "version": "1.0.0",
+  "description": "Extract sentences from your Garry's Mod addon",
+  "main": "index.js",
+  "devDependencies": {},
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/MaaxIT/lang_extractor.git"
+  },
+  "author": "MaaxIT",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/MaaxIT/lang_extractor/issues"
+  },
+  "homepage": "https://github.com/MaaxIT/lang_extractor#readme"
+}
