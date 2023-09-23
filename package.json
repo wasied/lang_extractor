@@ -14,12 +14,12 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/MaaxIT/lang_extractor.git"
+    "url": "git+https://github.com/wasied/lang_extractor.git"
   },
-  "author": "MaaxIT",
+  "author": "wasied",
   "license": "MIT",
   "bugs": {
-    "url": "https://github.com/MaaxIT/lang_extractor/issues"
+    "url": "https://github.com/wasied/lang_extractor/issues"
   },
-  "homepage": "https://github.com/MaaxIT/lang_extractor#readme"
+  "homepage": "https://github.com/wasied/lang_extractor#readme"
 }
