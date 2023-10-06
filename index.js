@@ -84,15 +84,16 @@ async function replaceInFiles(directoryPath, oldPhrase, newPhrase) {
 }
 
 function isSentence(input) {
-	if (input.toUpperCase() === input) return false;
+    if (input.toUpperCase() === input) return false;
   
-	const specialChars = /[~`!@#$%^&*()\-_=+[\]{};:"\\|,.<>/?]/;
-	if (specialChars.test(input.replace(/[.!?;]$/, ''))) return false;
+    // Check for special characters, but allow placeholders like '%s'
+    const specialChars = /[~`!@#$%^&*()\-_=+[\]{};:"\\|,.<>/?]/;
+    if (specialChars.test(input.replace(/[.!?;]$/, '').replace(/%s/g, ''))) return false;
   
-	const tokenizer = new natural.WordTokenizer();
-	const tokens = tokenizer.tokenize(input);
+    const tokenizer = new natural.WordTokenizer();
+    const tokens = tokenizer.tokenize(input.replace(/%s/g, 'placeholder'));
   
-	return tokens.length >= 2;
+    return tokens.length >= 2;
 }
 
 function extractStrings(fileContent, filePath) {
@@ -148,19 +149,40 @@ async function processDirectory(directoryPath, rl, rootPath) {
 }
 
 function confirmSentence(rl, filePath, sentence, lineNumber, rootPath) {
-	const relativePath = path.relative(rootPath, filePath);
-	return new Promise((resolve) => {
+    const relativePath = path.relative(rootPath, filePath);
+    
+    return new Promise((resolve) => {
+        console.log(`${colors.Cyan}--------------------------------------------------------------------------------${colors.Reset}`);
+        console.log(`${colors.Cyan}File:${colors.Reset} ${relativePath} ${colors.Cyan}[Line ${lineNumber}]${colors.Reset}`);
+        console.log(`${colors.Magenta}Sentence:${colors.Reset} ${sentence}`);
+        
+        process.stdout.write(`${colors.Yellow}Is it a sentence you want to put into languages.lua?${colors.Reset} (${colors.Green}Y${colors.Reset}/${colors.Red}n${colors.Reset} - Default: ${colors.Green}yes${colors.Reset}) `);
 
-		console.log(`${colors.Cyan}--------------------------------------------------------------------------------${colors.Reset}`);
-		console.log(`${colors.Cyan}File:${colors.Reset} ${relativePath} ${colors.Cyan}[Line ${lineNumber}]${colors.Reset}`);
-		console.log(`${colors.Magenta}Sentence:${colors.Reset} ${sentence}`);
+        // Key press listener
+        const keyListener = (chunk, key) => {
+            if (key) {
+                // If the user pressed SHIFT or any non-standard keys
+                if (key.shift || key.ctrl || key.meta) {
+                    process.stdin.removeListener('keypress', keyListener);
+                    process.stdin.setRawMode(false);
+                    resolve(false);
+                } else if (key.name === 'y' || key.name === 'n' || key.name === 'return') {
+                    process.stdin.removeListener('keypress', keyListener);
+                    process.stdin.setRawMode(false);
 
-		rl.question(`${colors.Yellow}Is it a sentence you want to put into languages.lua?${colors.Reset} (${colors.Green}Y${colors.Reset}/${colors.Red}n${colors.Reset} - Default: ${colors.Green}yes${colors.Reset}) `, (answer) => {
-			const confirmed = !(answer.toLowerCase() === 'n' || answer.toLowerCase() === 'no');
-			resolve(confirmed);
-		});
+                    if (key.name === 'n') {
+                        resolve(false);
+                    } else {
+                        resolve(true);
+                    }
+                }
+            }
+        };
 
-	});
+        process.stdin.setRawMode(true);
+        process.stdin.resume();
+        process.stdin.on('keypress', keyListener);
+    });
 }
 
 async function writeLanguagesFile(sentences, tableName) {
