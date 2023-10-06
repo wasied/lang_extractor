@@ -87,9 +87,10 @@ function isSentence(input) {
     if (input.toUpperCase() === input) return false;
   
     // Check for special characters, but allow placeholders like '%s'
-    const specialChars = /[~`!@#$%^&*()\-_=+[\]{};:"\\|,.<>/?]/;
+    const specialChars = /[~`!@#$%^&*()\_=+\[\]{};:"\\|,.<>?]/; 
     if (specialChars.test(input.replace(/[.!?;]$/, '').replace(/%s/g, ''))) return false;
-  
+    if (/[^ ]-[^ ]/.test(input)) return false;
+
     const tokenizer = new natural.WordTokenizer();
     const tokens = tokenizer.tokenize(input.replace(/%s/g, 'placeholder'));
   
