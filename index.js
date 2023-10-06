@@ -160,21 +160,15 @@ function confirmSentence(rl, filePath, sentence, lineNumber, rootPath) {
 
         // Key press listener
         const keyListener = (chunk, key) => {
-            if (key) {
-                // If the user pressed SHIFT or any non-standard keys
-                if (key.shift || key.ctrl || key.meta) {
-                    process.stdin.removeListener('keypress', keyListener);
-                    process.stdin.setRawMode(false);
-                    resolve(false);
-                } else if (key.name === 'y' || key.name === 'n' || key.name === 'return') {
-                    process.stdin.removeListener('keypress', keyListener);
-                    process.stdin.setRawMode(false);
+            if (key && (key.name === 'y' || key.name === 'n' || key.name === 'return')) {
+                process.stdin.removeListener('keypress', keyListener);
+                process.stdin.setRawMode(false);
+				console.log();
 
-                    if (key.name === 'n') {
-                        resolve(false);
-                    } else {
-                        resolve(true);
-                    }
+                if (key.name === 'n') {
+                    resolve(false);
+                } else {
+                    resolve(true);
                 }
             }
         };
